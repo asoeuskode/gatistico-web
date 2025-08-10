@@ -6,8 +6,8 @@ class SocioRepo:
     def __init__(self):
         pass
 
-    def get_db_connection():
-        conn = sqlite3.connect("gatistico.db")
+    def get_db_connection(self):
+        conn = sqlite3.connect("resources/gatistico.db")
         conn.row_factory = sqlite3.Row
         return conn
 
@@ -34,15 +34,14 @@ class SocioRepo:
         return {"message": "Socio creado exitosamente", "alias": alias}
 
 
-    def listar_socios(self) -> list:
+    def listar_socios(self) -> dict:
         """
         Lista todos los socios registrados.
         Nota: no se retorna la contraseña.
         """
         conn = self.get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT id, nombre, apellidos, alias, fecha_creacion, fecha_modificacion FROM socios")
+        cursor.execute("SELECT id, email, nombre, apellidos, alias, telefono, fecha_creacion, fecha_modificacion, asociacion_id FROM socios")
         socios = cursor.fetchall()
         conn.close()
-        return {"socios": [dict(socio) for socio in socios]}
-
+        return list(socios)

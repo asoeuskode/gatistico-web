@@ -11,8 +11,8 @@ class SocioApp:
 
     def insertar_socio(self, nombre: str, apellidos: str, alias: str, password_cifrada: str):
 
-        self.socio_repo.insertar_socio(nombre, apellidos, alias, password_cifrada)
+        return self.socio_repo.insertar_socio(nombre, apellidos, alias, password_cifrada)
 
 
     def listar_socios(self):
-        self.socio_repo.listar_socios()
+        return self.socio_repo.listar_socios()
