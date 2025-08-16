@@ -11,7 +11,7 @@ class SocioRepo:
         conn.row_factory = sqlite3.Row
         return conn
 
-    def insertar_socio(self, nombre, apellidos, alias, password_cifrada) -> dict:
+    def insertar_socio(self, email, nombre, apellidos, alias, telefono, password_cifrada, asociacion_id) -> dict:
         #make connection to the database
         conn = self.get_db_connection()
 
@@ -19,11 +19,11 @@ class SocioRepo:
         cursor = conn.cursor()
         try:
             cursor.execute(
-                """
-                INSERT INTO socios (nombre, apellidos, alias, password)
-                VALUES (?, ?, ?, ?, ?, ?)
-                """,
-                (nombre, apellidos, alias, password_cifrada)
+            """
+            INSERT INTO socios (email, nombre, apellidos, alias, telefono, password, asociacion_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (email, nombre, apellidos, alias, telefono, password_cifrada, asociacion_id)
             )
             conn.commit()
         except sqlite3.IntegrityError as e:
@@ -45,3 +45,25 @@ class SocioRepo:
         socios = cursor.fetchall()
         conn.close()
         return list(socios)
+
+    def asociacion_existe(self, asociacion_id: int) -> bool:
+        """
+        Verifica si una asociación existe en la base de datos.
+        """
+        conn = self.get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1 FROM asociaciones WHERE id = ?", (asociacion_id,))
+        existe = cursor.fetchone()[0] > 0
+        conn.close()
+        return existe
+    
+    def email_existe(self, email: str) -> bool:
+        """
+        Verifica si un email ya está registrado en la base de datos.
+        """
+        conn = self.get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1 FROM socios WHERE email = ?", (email,))
+        existe = cursor.fetchone() is not None
+        conn.close()
+        return existe
